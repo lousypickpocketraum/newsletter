@@ -34,8 +34,8 @@ public class MailGroupService implements IMailGroupService{
     }
 
     public MailGroupResponse findById(Long id){
-        Optional<MailGroup> mailGroup = Optional.ofNullable(mailGroupRepository.findById(id).orElseThrow(NoSuchMailGroupExistsException::new));
-        MailGroupResponse mailGroupResponse = new ModelMapper().map(mailGroup.get(), MailGroupResponse.class);
+        MailGroup mailGroup = mailGroupRepository.findById(id).orElseThrow(NoSuchMailGroupExistsException::new);
+        MailGroupResponse mailGroupResponse = new ModelMapper().map(mailGroup, MailGroupResponse.class);
         return mailGroupResponse;
     }
 

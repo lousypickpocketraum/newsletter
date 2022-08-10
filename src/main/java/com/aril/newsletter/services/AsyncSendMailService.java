@@ -4,13 +4,12 @@ import com.aril.newsletter.constants.MailLogStatus;
 import com.aril.newsletter.payloads.response.MailAttachmentResponse;
 import com.aril.newsletter.payloads.response.MailLogResponse;
 import com.aril.newsletter.payloads.response.MailTemplateResponse;
-import com.aril.newsletter.payloads.response.SendMailResponse;
-import com.aril.newsletter.repositories.IMailLogRepository;
 import com.aril.newsletter.utils.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -25,13 +24,17 @@ public class AsyncSendMailService implements IAsyncSendMailService {
     private JavaMailSender sender;
     @Autowired
     private MailTemplateService mailTemplateService;
+    @Autowired
+    private MailLogService mailLogService;
 
     @Override
-    public MailLogResponse sendMail(String mailAddress, Long mailTemplateId, Map<String, Object> model) {
+    @Async
+    public void asyncSendMail(String mailAddress, Long mailTemplateId, Map<String, Object> model, Long mailLogId) {
         MailTemplateResponse mailTemplateResponse = mailTemplateService.findById(mailTemplateId);
         MimeMessage message = sender.createMimeMessage();
-        MailLogResponse response = new MailLogResponse();
+
         try {
+            MailLogResponse response = mailLogService.findById(mailLogId);
             //set mediaType
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
@@ -46,9 +49,12 @@ public class AsyncSendMailService implements IAsyncSendMailService {
             helper.setTo(mailAddress);
             sender.send(message);
             response.setStatus(MailLogStatus.SUCCESS);
+            mailLogService.save(response);
+
         }catch (MessagingException e){
+            MailLogResponse response = mailLogService.findById(mailLogId);
             response.setStatus(MailLogStatus.FAIL);
+            mailLogService.save(response);
         }
-        return response;
     }
 }

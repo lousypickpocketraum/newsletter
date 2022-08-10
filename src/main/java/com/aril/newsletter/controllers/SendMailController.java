@@ -3,6 +3,7 @@ package com.aril.newsletter.controllers;
 import com.aril.newsletter.payloads.request.SendMailRequest;
 import com.aril.newsletter.payloads.response.MailLogResponse;
 import com.aril.newsletter.payloads.response.SendMailResponse;
+import com.aril.newsletter.services.MailLogService;
 import com.aril.newsletter.services.SendMailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ import java.util.UUID;
 public class SendMailController {
     @Autowired
     private SendMailService sendMailService;
+    @Autowired
+    private MailLogService mailLogService;
 
     @PostMapping("/sendingMail")
     public String sendMail(@RequestBody SendMailRequest sendMailRequest){
@@ -29,8 +32,8 @@ public class SendMailController {
     }
 
     @PostMapping("/trackMail/{requestCode}")
-    public List<MailLogResponse> trackMail(@PathVariable UUID requestCode, Map<String, Object> model){
-        return sendMailService.sendMail(model);
+    public List<MailLogResponse> trackMail(@PathVariable String requestCode){
+        return mailLogService.findByUUID(requestCode);
     }
 
 }

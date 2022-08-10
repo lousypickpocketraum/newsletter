@@ -6,12 +6,10 @@ import com.aril.newsletter.entities.MailLog;
 import com.aril.newsletter.payloads.response.MailGroupResponse;
 import com.aril.newsletter.payloads.response.MailLogResponse;
 import com.aril.newsletter.payloads.response.MailTemplateResponse;
-import com.aril.newsletter.payloads.response.SendMailResponse;
 import com.aril.newsletter.repositories.IMailLogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -45,21 +43,20 @@ public class SendMailService {
             mailLog.setMailTo(mailAddress.getMail());
             mailLog.setParameters(model.toString());
             mailLog.setStatus(MailLogStatus.NEW);
+            mailLog.setRequestCode(requestCode);
             mailLogRepository.save(mailLog);
         });
+        sendMail(requestCode,model);
         return requestCode;
     }
 
-    public List<MailLogResponse> sendMail(Map<String, Object> model){
-        List<MailLog> mailLogs = mailLogRepository.findAll();
+    public void sendMail(String requestCode, Map<String, Object> model){
+        List<MailLog> mailLogs = mailLogRepository.findMailLogByRequestCode(requestCode);
         List<MailLogResponse> mailLogResponses = mailLogs.stream()
                 .map(mailLog1 -> new ModelMapper().map(mailLog1,MailLogResponse.class))
                 .collect(Collectors.toList());
-        List<MailLogResponse> responseList = new ArrayList<>();
-        mailLogResponses.parallelStream().forEach(mailLog2 -> {
-            MailLogResponse response = asyncSendMailService.sendMail(mailLog2.getMailTo(),mailLog2.getMailTemplateId(),model);
-            responseList.add(response);
+        mailLogResponses.stream().forEach(mailLog2 -> {
+            asyncSendMailService.asyncSendMail(mailLog2.getMailTo(),mailLog2.getMailTemplateId(),model,mailLog2.getId());
         });
-        return responseList;
     }
 }
