@@ -28,8 +28,7 @@ public class AsyncSendMailService implements IAsyncSendMailService {
     private MailLogService mailLogService;
 
     @Override
-    @Async
-    public void asyncSendMail(String mailAddress, Long mailTemplateId, Map<String, Object> model, Long mailLogId) {
+    public void sendMail(String mailAddress, Long mailTemplateId, Map<String, Object> props, Long mailLogId) {
         MailTemplateResponse mailTemplateResponse = mailTemplateService.findById(mailTemplateId);
         MimeMessage message = sender.createMimeMessage();
 
@@ -42,7 +41,7 @@ public class AsyncSendMailService implements IAsyncSendMailService {
             for(MailAttachmentResponse attachment: mailTemplateResponse.getAttachments()) {
                 helper.addAttachment(attachment.getName(), new ClassPathResource("chesterbennington.jpg"));
             }
-            String html = Util.insertParams(mailTemplateResponse.getContent(), model);
+            String html = Util.insertParams(mailTemplateResponse.getContent(), props);
             helper.setFrom("yeness.drsn@gmail.com");
             helper.setText(html, true);
             helper.setSubject(mailTemplateResponse.getName());
