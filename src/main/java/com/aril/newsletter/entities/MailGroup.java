@@ -18,8 +18,8 @@ public class MailGroup {
     private String name;
     @Column(unique = true)
     private String tag;
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<MailEntity> mailEntities = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<MailEntity> mailEntities;
     @CreationTimestamp
     private LocalDateTime createTime;
     @UpdateTimestamp

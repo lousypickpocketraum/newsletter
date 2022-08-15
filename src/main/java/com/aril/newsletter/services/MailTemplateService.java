@@ -33,7 +33,7 @@ public class MailTemplateService {
                 .collect(Collectors.toList());
     }
 
-    public MailTemplateResponse findById(Long id){
+    public MailTemplateResponse findById(Long id) {
         MailTemplate mailTemplate = mailTemplateRepository.findById(id).orElseThrow(NoSuchMailTemplateExistsException::new);
         return new ModelMapper().map(mailTemplate, MailTemplateResponse.class);
     }
@@ -42,7 +42,7 @@ public class MailTemplateService {
         MailTemplate mailTemplate = new ModelMapper().map(mailTemplateRequest, MailTemplate.class);
         mailTemplate.setCreateTime(LocalDateTime.now());
         mailTemplate.setActive(true);
-        for(String attachment: mailTemplateRequest.getAttachmentList()){
+        for (String attachment : mailTemplateRequest.getAttachmentList()) {
             MailAttachment mailAttachment = new MailAttachment();
             mailAttachment.setName(attachment);
             mailTemplate.getAttachments().add(mailAttachment);
@@ -58,8 +58,8 @@ public class MailTemplateService {
             mailTemplate.get().setContent(mailTemplateRequest.getContent());
             mailTemplate.get().setUpdateTime(LocalDateTime.now());
             mailTemplate.get().getAttachments().clear();
-            for(String attachment: mailTemplateRequest.getAttachmentList()){
-                Optional <MailAttachment> attachment_ = mailAttachmentRepository.findByName(attachment);
+            for (String attachment : mailTemplateRequest.getAttachmentList()) {
+                Optional<MailAttachment> attachment_ = mailAttachmentRepository.findByName(attachment);
                 MailAttachment mailAttachment = attachment_.orElseGet(MailAttachment::new);
                 mailAttachment.setName(attachment);
                 mailTemplate.get().getAttachments().add(mailAttachment);
@@ -69,7 +69,7 @@ public class MailTemplateService {
         return null;
     }
 
-    public void delete (Long id) {
+    public void delete(Long id) {
         Optional<MailTemplate> mailTemplate = mailTemplateRepository.findById(id);
         if (mailTemplate.isPresent()) {
             mailTemplate.get().setDeleted(true);

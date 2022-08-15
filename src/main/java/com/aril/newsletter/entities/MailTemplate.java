@@ -18,8 +18,8 @@ public class MailTemplate {
     private String name;
     private String title;
     private String content;
-    @ManyToMany(cascade = CascadeType.ALL)
-    private List<MailAttachment> attachments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<MailAttachment> attachments;
     @CreationTimestamp
     private LocalDateTime createTime;
     @UpdateTimestamp
