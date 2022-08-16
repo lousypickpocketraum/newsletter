@@ -1,6 +1,8 @@
 package com.aril.newsletter.services;
 
+import com.aril.newsletter.payloads.request.MailAddressRequest;
 import com.aril.newsletter.payloads.request.MailGroupRequest;
+import com.aril.newsletter.payloads.response.MailAddressResponse;
 import com.aril.newsletter.payloads.response.MailGroupResponse;
 import com.aril.newsletter.entities.MailEntity;
 import com.aril.newsletter.entities.MailGroup;
@@ -43,10 +45,12 @@ public class MailGroupService implements IMailGroupService{
         MailGroup mailGroup = new ModelMapper().map(mailGroupRequest, MailGroup.class);
         mailGroup.setCreateTime(LocalDateTime.now());
         mailGroup.setActive(true);
-        for(String mail : mailGroupRequest.getMailList()) {
-            Optional<MailEntity> mail_ = mailEntityRepository.findByMailAddress(mail);
+        for(MailAddressRequest mail : mailGroupRequest.getMailList()) {
+            Optional<MailEntity> mail_ = mailEntityRepository.findByMailAddress(mail.getMailAddress());
             MailEntity mailEntity = mail_.orElseGet(MailEntity::new);
-            mailEntity.setMailAddress(mail);
+            mailEntity.setMailAddress(mail.getMailAddress());
+            mailEntity.setName(mail.getName());
+            mailEntity.setEdas(mail.getEdas());
             mailGroup.getMailEntities().add(mailEntity);
         }
         return mailGroupRepository.save(mailGroup);
@@ -57,10 +61,10 @@ public class MailGroupService implements IMailGroupService{
             mailGroup.get().setName(mailGroupRequest.getName());
             mailGroup.get().setTag(mailGroupRequest.getTag());
             mailGroup.get().getMailEntities().clear();
-            for(String mail : mailGroupRequest.getMailList()) {
-                Optional<MailEntity> mail_ = mailEntityRepository.findByMailAddress(mail);
+            for(MailAddressRequest mail : mailGroupRequest.getMailList()) {
+                Optional<MailEntity> mail_ = mailEntityRepository.findByMailAddress(mail.getMailAddress());
                 MailEntity mailEntity = mail_.orElseGet(MailEntity::new);
-                mailEntity.setMailAddress(mail);
+                mailEntity.setMailAddress(mail.getMailAddress());
                 mailGroup.get().getMailEntities().add(mailEntity);
             }
             return mailGroupRepository.save(mailGroup.get());

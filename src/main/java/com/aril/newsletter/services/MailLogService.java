@@ -47,8 +47,8 @@ public class MailLogService implements IMailLogService {
             mailLog.setMailTemplateId(mailTemplateResponse.getId());
             mailLog.setMailGroupId(mailGroupResponse.getId());
             mailLog.setMailFrom("yeness.drsn@gmail.com");
-            mailLog.setMailTo(mailAddress.getMail());
-            mailLog.setParameters(sendMailRequest.getProps().toString());
+            mailLog.setMailTo(mailAddress.getMailAddress());
+            mailLog.setParameters(Util.createParams(mailAddress));
             mailLog.setStatus(MailLogStatus.NEW);
             mailLog.setRequestCode(requestCode);
             mailLogRepository.save(mailLog);

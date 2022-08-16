@@ -3,13 +3,10 @@ package com.aril.newsletter.payloads.request;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
-public class MailGroupRequest {
+public class MailAddressRequest {
     private String name;
-    private String tag;
-    private List<MailAddressRequest> mailList;
-
+    private String edas;
+    private String mailAddress;
 }

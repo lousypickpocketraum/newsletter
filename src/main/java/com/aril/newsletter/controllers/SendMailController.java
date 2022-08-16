@@ -3,15 +3,11 @@ package com.aril.newsletter.controllers;
 import com.aril.newsletter.payloads.request.SendMailRequest;
 import com.aril.newsletter.payloads.response.MailLogResponse;
 import com.aril.newsletter.services.MailLogService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+@CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
 public class SendMailController {
 

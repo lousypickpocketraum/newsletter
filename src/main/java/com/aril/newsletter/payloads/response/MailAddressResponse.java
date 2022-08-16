@@ -7,5 +7,7 @@ import lombok.Setter;
 @Setter
 public class MailAddressResponse {
     private Long id;
-    private String mail;
+    private String mailAddress;
+    private String name;
+    private String edas;
 }
