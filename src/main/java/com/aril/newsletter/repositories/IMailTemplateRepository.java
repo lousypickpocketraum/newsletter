@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface IMailTemplateRepository extends JpaRepository<MailTemplate, Long> {
     Optional<MailTemplate> findByName(String name);
-    @Query(value = "SELECT * from mail_template where is_active=1", nativeQuery = true)
+
+    @Query(value = "SELECT * from mail_template where is_active=true ", nativeQuery = true)
     Optional<List<MailTemplate>> findByActiveIs();
 }
