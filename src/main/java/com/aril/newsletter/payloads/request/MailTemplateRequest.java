@@ -11,5 +11,5 @@ public class MailTemplateRequest {
     private String name;
     private String title;
     private String content;
-    private List<String> attachmentList;
+    private List<String> attachments;
 }

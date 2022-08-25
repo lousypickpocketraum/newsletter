@@ -19,8 +19,8 @@ public class MailTemplateController {
     MailTemplateService service;
 
     @GetMapping("/mailTemplates")
-    public ResponseEntity<List<MailTemplateResponse>> getAllMailTemplates(){
-        List<MailTemplateResponse> mailTemplateResponses = service.findAll();
+    public ResponseEntity<List<MailTemplateResponse>> getActiveMailTemplates(){
+        List<MailTemplateResponse> mailTemplateResponses = service.findByActiveIs();
         return new ResponseEntity<>(mailTemplateResponses, HttpStatus.OK);
     }
 

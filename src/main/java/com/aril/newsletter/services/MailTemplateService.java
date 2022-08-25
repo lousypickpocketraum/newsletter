@@ -33,6 +33,13 @@ public class MailTemplateService {
                 .collect(Collectors.toList());
     }
 
+    public List<MailTemplateResponse> findByActiveIs() {
+        Optional<List<MailTemplate>> mailTemplate = mailTemplateRepository.findByActiveIs();
+        return mailTemplate.get().stream()
+                .map(mailTemplate1 -> new ModelMapper().map(mailTemplate1, MailTemplateResponse.class))
+                .collect(Collectors.toList());
+    }
+
     public MailTemplateResponse findById(Long id) {
         MailTemplate mailTemplate = mailTemplateRepository.findById(id).orElseThrow(NoSuchMailTemplateExistsException::new);
         return new ModelMapper().map(mailTemplate, MailTemplateResponse.class);
@@ -42,7 +49,7 @@ public class MailTemplateService {
         MailTemplate mailTemplate = new ModelMapper().map(mailTemplateRequest, MailTemplate.class);
         mailTemplate.setCreateTime(LocalDateTime.now());
         mailTemplate.setActive(true);
-        for (String attachment : mailTemplateRequest.getAttachmentList()) {
+        for (String attachment : mailTemplateRequest.getAttachments()) {
             MailAttachment mailAttachment = new MailAttachment();
             mailAttachment.setName(attachment);
             mailTemplate.getAttachments().add(mailAttachment);
@@ -58,7 +65,7 @@ public class MailTemplateService {
             mailTemplate.get().setContent(mailTemplateRequest.getContent());
             mailTemplate.get().setUpdateTime(LocalDateTime.now());
             mailTemplate.get().getAttachments().clear();
-            for (String attachment : mailTemplateRequest.getAttachmentList()) {
+            for (String attachment : mailTemplateRequest.getAttachments()) {
                 Optional<MailAttachment> attachment_ = mailAttachmentRepository.findByName(attachment);
                 MailAttachment mailAttachment = attachment_.orElseGet(MailAttachment::new);
                 mailAttachment.setName(attachment);
