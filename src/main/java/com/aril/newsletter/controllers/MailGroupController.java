@@ -19,8 +19,8 @@ public class MailGroupController {
     private MailGroupService service;
 
     @GetMapping("/mailGroups")
-    public ResponseEntity<List<MailGroupResponse>> getAllMailGroups(){
-        List<MailGroupResponse> mailGroupResponses = service.findAll();
+    public ResponseEntity<List<MailGroupResponse>> getActiveMailGroups(){
+        List<MailGroupResponse> mailGroupResponses = service.findByActiveIs();
         return new ResponseEntity<>(mailGroupResponses, HttpStatus.OK);
     }
     @GetMapping("/mailGroups/{id}")

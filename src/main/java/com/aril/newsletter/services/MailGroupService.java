@@ -35,6 +35,13 @@ public class MailGroupService implements IMailGroupService{
         return mailGroupResponses;
     }
 
+    public List<MailGroupResponse> findByActiveIs() {
+        Optional<List<MailGroup>> mailGroups = mailGroupRepository.findByActiveIs();
+        return mailGroups.get().stream()
+                .map(mailGroup1 -> new ModelMapper().map(mailGroup1, MailGroupResponse.class))
+                .collect(Collectors.toList());
+    }
+
     public MailGroupResponse findById(Long id){
         MailGroup mailGroup = mailGroupRepository.findById(id).orElseThrow(NoSuchMailGroupExistsException::new);
         MailGroupResponse mailGroupResponse = new ModelMapper().map(mailGroup, MailGroupResponse.class);
