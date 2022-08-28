@@ -72,6 +72,8 @@ public class MailGroupService implements IMailGroupService{
                 Optional<MailEntity> mail_ = mailEntityRepository.findByMailAddress(mail.getMailAddress());
                 MailEntity mailEntity = mail_.orElseGet(MailEntity::new);
                 mailEntity.setMailAddress(mail.getMailAddress());
+                mailEntity.setName(mail.getName());
+                mailEntity.setEdas(mail.getEdas());
                 mailGroup.get().getMailEntities().add(mailEntity);
             }
             return mailGroupRepository.save(mailGroup.get());
