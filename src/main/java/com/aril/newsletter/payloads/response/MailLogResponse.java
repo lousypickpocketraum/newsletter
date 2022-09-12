@@ -1,6 +1,7 @@
 package com.aril.newsletter.payloads.response;
 
 import com.aril.newsletter.constants.MailLogStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class MailLogResponse {
     private Long mailTemplateId;
     private Long mailGroupId;
     private MailLogStatus status;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime;
     private String parameters;
     private String mailFrom;
