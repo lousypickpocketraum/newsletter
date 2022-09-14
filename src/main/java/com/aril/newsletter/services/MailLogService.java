@@ -2,6 +2,9 @@ package com.aril.newsletter.services;
 
 import com.aril.newsletter.constants.MailLogStatus;
 import com.aril.newsletter.entities.MailLog;
+import com.aril.newsletter.filter.MailLogSpecification;
+import com.aril.newsletter.filter.SearchCriteria;
+import com.aril.newsletter.payloads.request.MailLogRequest;
 import com.aril.newsletter.payloads.request.SendMailRequest;
 import com.aril.newsletter.payloads.response.MailAttachmentResponse;
 import com.aril.newsletter.payloads.response.MailGroupResponse;
@@ -14,6 +17,7 @@ import com.aril.newsletter.utils.Util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,12 +74,22 @@ public class MailLogService implements IMailLogService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<MailLogResponse> findByMailLogRequest(MailLogRequest mailLogRequest) {
+        MailLogSpecification specMailGroup = new MailLogSpecification(new SearchCriteria("mailGroupId",":",mailLogRequest.getMailGroupId()));
+        MailLogSpecification specMailTemplate = new MailLogSpecification(new SearchCriteria("mailTemplateId",":",mailLogRequest.getMailTemplateId()));
+        MailLogSpecification specStatus = new MailLogSpecification(new SearchCriteria("status",":",mailLogRequest.getStatus()));
+        List<MailLog> mailLogs = mailLogRepository.findAll(Specification.where(specMailGroup).and(specMailTemplate).and(specStatus));
+        return mailLogs.stream()
+                .map(mailLog -> new ModelMapper().map(mailLog,MailLogResponse.class))
+                .collect(Collectors.toList());
+    }
+
 
     public void sendNewMails() {
         List<MailLog> mailLogs = mailLogRepository.findMailLogByStatus(MailLogStatus.NEW);
         for (MailLog mailLog : mailLogs) {
             MailTemplateResponse template = templateService.findById(mailLog.getMailTemplateId());
-            MailGroupResponse group = groupService.findById(mailLog.getMailGroupId());
 
             MailObject mailObject = new MailObject();
             mailObject.setTo(mailLog.getMailTo());
