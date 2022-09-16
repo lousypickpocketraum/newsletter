@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.aril.newsletter.filter.Specifications.*;
+
 @Service
 public class MailLogService implements IMailLogService {
 
@@ -76,10 +78,18 @@ public class MailLogService implements IMailLogService {
 
     @Override
     public List<MailLogResponse> findByMailLogRequest(MailLogRequest mailLogRequest) {
-        MailLogSpecification specMailGroup = new MailLogSpecification(new SearchCriteria("mailGroupId",":",mailLogRequest.getMailGroupId()));
-        MailLogSpecification specMailTemplate = new MailLogSpecification(new SearchCriteria("mailTemplateId",":",mailLogRequest.getMailTemplateId()));
-        MailLogSpecification specStatus = new MailLogSpecification(new SearchCriteria("status",":",mailLogRequest.getStatus()));
-        List<MailLog> mailLogs = mailLogRepository.findAll(Specification.where(specMailGroup).and(specMailTemplate).and(specStatus));
+        Specification<MailLog> searchMailLog = Specification.not(null);
+
+        if(mailLogRequest.getMailGroupId() != null)
+            searchMailLog = searchMailLog.and(specMailGroupId(mailLogRequest.getMailGroupId()));
+
+        if(mailLogRequest.getMailTemplateId() != null)
+            searchMailLog = searchMailLog.and(specMailTemplateId(mailLogRequest.getMailTemplateId()));
+
+        if(mailLogRequest.getStatus() != null)
+            searchMailLog = searchMailLog.and(specStatus(mailLogRequest.getStatus()));
+
+        List<MailLog> mailLogs = mailLogRepository.findAll(Specification.where(searchMailLog));
         return mailLogs.stream()
                 .map(mailLog -> new ModelMapper().map(mailLog,MailLogResponse.class))
                 .collect(Collectors.toList());
